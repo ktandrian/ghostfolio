@@ -49,6 +49,8 @@ jobs:
           service_account: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
 
       - name: 'Run Autonomous Gemini Agent'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: 'google-github-actions/run-gemini-cli@v0'
         with:
           use_vertex_ai: 'true'
@@ -60,9 +62,11 @@ jobs:
               "coreTools": [
                 "run_shell_command(cat)",
                 "run_shell_command(echo)",
+                "run_shell_command(grep)",
                 "run_shell_command(head)",
                 "run_shell_command(ls)",
                 "run_shell_command(mkdir)",
+                "run_shell_command(pwd)",
                 "run_shell_command(tail)",
                 "run_shell_command(gh issue comment)",
                 "run_shell_command(gh issue list)",
