@@ -76,7 +76,7 @@ jobs:
                 "run_shell_command(git commit)",
                 "run_shell_command(git config)",
                 "run_shell_command(git diff)",
-                "run_shell_command(git push)"
+                "run_shell_command(git push)",
                 "run_shell_command(git status)",
                 "write_file"
               ]
