@@ -1,0 +1,129 @@
+name: '🤖 AI Documentation Agent'
+
+on:
+  pull_request:
+    types:
+      - 'opened'
+      - 'synchronize'
+  issue_comment:
+    types:
+      - 'created'
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+permissions:
+  contents: 'write'
+  id-token: 'write'
+  pull-requests: 'write'
+
+jobs:
+  docs-agent:
+    name: '🤖 AI Documentation Agent'
+    if: |-
+      github.event_name == 'pull_request' ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request &&
+        contains(github.event.comment.body, '@gemini-cli /document')
+      )
+    timeout-minutes: 20
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - name: 'Checkout PR code'
+        uses: 'actions/checkout@v4'
+        with:
+          ref: '${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}'
+          fetch-depth: 0
+
+      - name: 'Install dependencies'
+        run: npm install
+
+      - name: 'Authenticate to Google Cloud'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
+          service_account: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
+
+      - name: 'Run Autonomous Gemini Agent'
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        with:
+          use_vertex_ai: 'true'
+          gcp_project_id: '${{ secrets.GCP_PROJECT_ID }}'
+          gcp_location: 'us-central1'
+          settings: |-
+            {
+              "maxSessionTurns": 40,
+              "coreTools": [
+                "run_shell_command(cat)",
+                "run_shell_command(echo)",
+                "run_shell_command(head)",
+                "run_shell_command(ls)",
+                "run_shell_command(mkdir)",
+                "run_shell_command(tail)",
+                "run_shell_command(gh issue comment)",
+                "run_shell_command(gh issue list)",
+                "run_shell_command(gh issue view)",
+                "run_shell_command(gh pr comment)",
+                "run_shell_command(gh pr create)",
+                "run_shell_command(gh pr diff)",
+                "run_shell_command(gh pr list)",
+                "run_shell_command(gh pr view)",
+                "run_shell_command(git add)",
+                "run_shell_command(git commit)",
+                "run_shell_command(git config)",
+                "run_shell_command(git diff)",
+                "run_shell_command(git push)"
+                "run_shell_command(git status)",
+                "write_file"
+              ]
+            }
+          prompt: |-
+            ## Role & Mission
+            You are a fully autonomous AI software engineer and expert technical writer. Your mission is to perform deep analysis of pull request changes, create or update documentation, and commit the results back to the PR branch.
+
+            ## Context
+            - **Repository**: '${{ github.repository }}'
+            - **Current Branch**: '${{ github.head_ref }}'
+            - **Base Branch**: '${{ github.base_ref }}'
+            - **PR Number**: '${{ github.event.pull_request.number || github.event.issue.number }}'
+
+            ## Plan of Action
+            You MUST follow these steps in order. This is your operational playbook.
+
+            ### Step 1: In-Depth Code Analysis
+            1.  Run `git diff "origin/${{ github.base_ref }}" HEAD` to get a list of changed files and a summary of changes.
+            2.  For each key modified function, class, or variable identified in the diff, you MUST search the codebase for its usages to understand its impact. Use `grep` for this (e.g., `run_shell_command(grep -r "myChangedFunction" .)`).
+            3.  Read the full content of the changed files (`cat path/to/file`) and any important related files found via `grep` to build a deep, contextual understanding.
+
+            ### Step 2: Formulate and Execute Documentation Strategy
+            1.  Synthesize your analysis to decide if changes require creating a **new** document or **updating existing ones**.
+            2.  Check for relevant existing documentation with `run_shell_command(ls -R docs/)`.
+            3.  **IF an existing document is relevant:**
+                a. Read its content with `run_shell_command(cat path/to/doc.md)`.
+                b. Intelligently merge the new information into the existing content.
+                c. Use `write_file` to overwrite the file with the comprehensive updates.
+            4.  **ELSE (if no document is relevant):**
+                a. Decide on a new, descriptive file name.
+                b. Generate new Markdown content based on your deep analysis.
+                c. Use `write_file` to save the new file.
+            5.  Ensure the `/docs` directory exists with `run_shell_command(mkdir -p docs)`.
+
+            ### Step 3: Commit and Push Your Work
+            1.  **Configure Git**: Run these exact commands:
+                - `run_shell_command(git config --global user.name 'AI Documentation Bot')`
+                - `run_shell_command(git config --global user.email 'github-actions[bot]@users.noreply.github.com')`
+            2.  **Create a new branch**: Create a new branch for the documentation changes.
+                - `run_shell_command(git checkout -b docs-${{ github.head_ref }})`
+            3.  **Stage Your Files**: `run_shell_command(git add docs/)`.
+            4.  **Check for Changes**: Run `run_shell_command(git status --porcelain)`. If the output is empty, respond with "No documentation changes were needed." and conclude the mission.
+            5.  **Commit**: `run_shell_command(git commit -m "docs: AI-generated documentation for #${{ github.event.pull_request.number || github.event.issue.number }}")`.
+            6.  **Push**: `run_shell_command(git push origin docs-${{ github.head_ref }})`.
+            7.  **Create a Pull Request**: Create a pull request for the documentation changes.
+                - `run_shell_command(gh pr create --title "🤖 AI Documentation for PR #${{ github.event.pull_request.number || github.event.issue.number }}" --body "This PR contains AI-generated documentation for the changes in PR #${{ github.event.pull_request.number || github.event.issue.number }}.")`
+
+            ## Final Output
+            Your final output should be a brief confirmation message stating what you have done.
