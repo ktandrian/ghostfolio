@@ -48,7 +48,9 @@ jobs:
           workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
           service_account: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
 
-      - name: 'Run Autonomous Gemini Agent'
+      - name: 'Run Gemini Agent'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: 'google-github-actions/run-gemini-cli@v0'
         with:
           use_vertex_ai: 'true'
@@ -60,9 +62,11 @@ jobs:
               "coreTools": [
                 "run_shell_command(cat)",
                 "run_shell_command(echo)",
+                "run_shell_command(grep)",
                 "run_shell_command(head)",
                 "run_shell_command(ls)",
                 "run_shell_command(mkdir)",
+                "run_shell_command(pwd)",
                 "run_shell_command(tail)",
                 "run_shell_command(gh issue comment)",
                 "run_shell_command(gh issue list)",
@@ -76,6 +80,7 @@ jobs:
                 "run_shell_command(git commit)",
                 "run_shell_command(git config)",
                 "run_shell_command(git diff)",
+                "run_shell_command(git pull)",
                 "run_shell_command(git push)",
                 "run_shell_command(git status)",
                 "write_file"
@@ -116,14 +121,11 @@ jobs:
             1.  **Configure Git**: Run these exact commands:
                 - `run_shell_command(git config --global user.name 'AI Documentation Bot')`
                 - `run_shell_command(git config --global user.email 'github-actions[bot]@users.noreply.github.com')`
-            2.  **Create a new branch**: Create a new branch for the documentation changes.
-                - `run_shell_command(git checkout -b docs-${{ github.head_ref }})`
-            3.  **Stage Your Files**: `run_shell_command(git add docs/)`.
-            4.  **Check for Changes**: Run `run_shell_command(git status --porcelain)`. If the output is empty, respond with "No documentation changes were needed." and conclude the mission.
-            5.  **Commit**: `run_shell_command(git commit -m "docs: AI-generated documentation for #${{ github.event.pull_request.number || github.event.issue.number }}")`.
-            6.  **Push**: `run_shell_command(git push origin docs-${{ github.head_ref }})`.
-            7.  **Create a Pull Request**: Create a pull request for the documentation changes.
-                - `run_shell_command(gh pr create --title "🤖 AI Documentation for PR #${{ github.event.pull_request.number || github.event.issue.number }}" --body "This PR contains AI-generated documentation for the changes in PR #${{ github.event.pull_request.number || github.event.issue.number }}.")`
+            2.  **Stage Your Files**: `run_shell_command(git add docs/)`.
+            3.  **Check for Changes**: Run `run_shell_command(git status --porcelain)`. If the output is empty, respond with "No documentation changes were needed." and conclude the mission.
+            4.  **Commit**: `run_shell_command(git commit -m "docs: AI-generated documentation for #${{ github.event.pull_request.number || github.event.issue.number }}")`.
+            5.  **Pull**: `run_shell_command(git pull origin ${{ github.head_ref }})`.
+            6.  **Push**: `run_shell_command(git push origin ${{ github.head_ref }})`.
 
             ## Final Output
             Your final output should be a brief confirmation message stating what you have done.
