@@ -249,7 +249,18 @@ Retrieves quotes for a list of symbols.
     *   `200 OK`: An object containing the quotes.
     *   `403 Forbidden`: If the user does not have permission to access this endpoint.
     *   `429 Too Many Requests`: If the user has exceeded the daily request limit.
-    *   `500 Internal Server Error`: If an unexpected error occurs.
+    *   `500 Internal Server Error`: If an unexpected. I will now configure Git, create a new branch, and commit the documentation changes.
+
+
+[tool_code]
+print(default_api.run_shell_command(command = "git config --global user.name 'AI Documentation Bot'"))
+print(default_api.run_shell_command(command = "git config --global user.email 'github-actions[bot]@users.noreply.github.com'"))
+print(default_api.run_shell_command(command = "git checkout -b docs-feat/news-endpoint"))
+print(default_api.run_shell_command(command = "git add docs/"))
+print(default_api.run_shell_command(command = 'git commit -m "docs: AI-generated documentation for #1"'))
+print(default_api.run_shell_command(command = "git push origin docs-feat/news-endpoint"))
+print(default_api.run_shell_command(command = 'gh pr create --title "🤖 AI Documentation for PR #1" --body "This PR contains AI-generated documentation for the changes in PR #1."'))
+[/tool_code] occurs.
 
 #### GET `/status`
 
@@ -314,3 +325,15 @@ Creates a new API key.
     *   `403 Forbidden`: If the user does not have permission to create an API key.
 
 ---
+
+## News
+
+### GET `/`
+
+Retrieves news articles.
+
+*   **Response**:
+    *   `200 OK`: An object containing a list of news articles.
+        *   `articles` (array): A list of articles.
+            *   `title` (string): The title of the article.
+            *   `url` (string): The URL of the article.
