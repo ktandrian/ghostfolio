@@ -73,6 +73,8 @@ jobs:
                 "run_shell_command(gh pr list)",
                 "run_shell_command(gh pr view)",
                 "run_shell_command(git add)",
+                "run_shell_command(git branch)",
+                "run_shell_command(git checkout)",
                 "run_shell_command(git commit)",
                 "run_shell_command(git config)",
                 "run_shell_command(git diff)",
