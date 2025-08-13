@@ -119,7 +119,8 @@ jobs:
             4.  **ELSE (if no document is relevant):**
                 a. Decide on a new, descriptive file name.
                 b. Generate new Markdown content based on your deep analysis.
-                c. Use `write_file` to save the new file.
+                c. Use `write_file` to save the new file. 
+                   **IMPORTANT**: The `write_file` tool requires an absolute path. You MUST use `run_shell_command(pwd)` to get the absolute path of the current working directory and then construct the full path to the file. For example: `write_file(file_path: "/path/from/pwd/docs/new-feature.md", ...)`
             5.  Ensure the `/docs` directory exists with `run_shell_command(mkdir -p docs)`.
 
             ### Step 3: Commit and Push Your Work
