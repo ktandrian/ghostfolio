@@ -33,10 +33,15 @@ jobs:
 
     steps:
       - name: 'Checkout PR code'
-        uses: 'actions/checkout@v4'
+        uses: 'actions/checkout@v5'
         with:
           ref: '${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}'
           fetch-depth: 0
+
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: 'Install dependencies'
         run: npm install
