@@ -107,32 +107,33 @@ jobs:
 
             ### Step 1: In-Depth Code Analysis
             1.  Run `git diff "origin/${{ github.base_ref }}" HEAD` to get a list of changed files and a summary of changes.
-            2.  For each key modified function, class, or variable identified in the diff, you MUST search the codebase for its usages to understand its impact. Use `grep` for this (e.g., `run_shell_command(grep -r "myChangedFunction" .)`).
+            2.  For each key modified function, class, or variable identified in the diff, you MUST search the codebase for its usages to understand its impact. Use `grep` for this (e.g., `grep -r "myChangedFunction" .`).
             3.  Read the full content of the changed files (`cat path/to/file`) and any important related files found via `grep` to build a deep, contextual understanding.
 
             ### Step 2: Formulate and Execute Documentation Strategy
             1.  Synthesize your analysis to decide if changes require creating a **new** document or **updating existing ones**.
-            2.  Check for relevant existing documentation with `run_shell_command(ls -R docs/)`.
+            2.  Check for relevant existing documentation by running `ls -R docs/`.
             3.  **IF an existing document is relevant:**
-                a. Read its content with `run_shell_command(cat path/to/doc.md)`.
+                a. Read its content by running `cat path/to/doc.md`.
                 b. Intelligently merge the new information into the existing content.
                 c. Use `write_file` to overwrite the file with the comprehensive updates.
             4.  **ELSE (if no document is relevant):**
                 a. Decide on a new, descriptive file name.
                 b. Generate new Markdown content based on your deep analysis.
-                c. Use `write_file` to save the new file. 
-                   **IMPORTANT**: The `write_file` tool requires an absolute path. You MUST use `run_shell_command(pwd)` to get the absolute path of the current working directory and then construct the full path to the file. For example: `write_file(file_path: "/path/from/pwd/docs/new-feature.md", ...)`
-            5.  Ensure the `/docs` directory exists with `run_shell_command(mkdir -p docs)`.
+                c. Use `write_file` to save the new file.
+                   **IMPORTANT**: The `write_file` tool requires an absolute path. You MUST use `pwd` to get the absolute path of the current working directory and then construct the full path to the file. For example: `write_file(file_path: "/path/from/pwd/docs/new-feature.md", ...)`
+            5.  Ensure the `/docs` directory exists by running `mkdir -p docs`.
 
             ### Step 3: Commit and Push Your Work
             1.  **Configure Git**: Run these exact commands:
-                - `run_shell_command(git config --global user.name 'AI Documentation Bot')`
-                - `run_shell_command(git config --global user.email 'github-actions[bot]@users.noreply.github.com')`
-            2.  **Stage Your Files**: `run_shell_command(git add docs/)`.
-            3.  **Check for Changes**: Run `run_shell_command(git status --porcelain)`. If the output is empty, respond with "No documentation changes were needed." and conclude the mission.
-            4.  **Commit**: `run_shell_command(git commit -m "docs: AI-generated documentation for #${{ github.event.pull_request.number || github.event.issue.number }}")`.
-            5.  **Pull**: `run_shell_command(git pull origin ${{ github.head_ref }})`.
-            6.  **Push**: `run_shell_command(git push origin ${{ github.head_ref }})`.
+                - `git config --global user.name 'AI Documentation Bot'`
+                - `git config --global user.email 'github-actions[bot]@users.noreply.github.com'`
+            2.  **Stage Your Files**: Run `git add docs/`.
+            3.  **Check for Changes**: Run `git status --porcelain`. If the output is empty, respond with "No documentation changes were needed." and conclude the mission.
+            4.  **Generate Commit Message**: Generate a descriptive commit message that summarizes the changes. For example: "add documentation for news endpoint".
+            5.  **Commit**: Run `git commit -m "docs: <generated-commit-message>"`.
+            5.  **Pull**: Run `git pull origin ${{ github.head_ref }}`.
+            6.  **Push**: Run `git push origin ${{ github.head_ref }}`.
 
             ## Final Output
             Your final output should be a brief confirmation message stating what you have done.
