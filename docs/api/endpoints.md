@@ -15,6 +15,17 @@ Retrieves the web manifest for the application.
 
 ---
 
+## News
+
+### GET `/news`
+
+Retrieves the latest news articles.
+
+*   **Response**:
+    *   `200 OK`: A JSON object containing a list of news articles.
+
+---
+
 ## Public
 
 ### GET `/:accessId/portfolio`
@@ -223,7 +234,7 @@ Retrieves historical market data for a given symbol.
 *   **Response**:
     *   `200 OK`: An object containing the historical data.
     *   `403 Forbidden`: If the user does not have permission to access this endpoint.
-    *   `429 Too Many Requests`: If the user has exceeded the daily request limit.
+    *   `429 Too Many Requests`: If the user has exceeded the daily request.
     *   `500 Internal Server Error`: If an unexpected error occurs.
 
 #### GET `/lookup`
@@ -256,7 +267,7 @@ Retrieves quotes for a list of symbols.
 Retrieves the status of the Ghostfolio data provider.
 
 *   **Response**:
-    *   `200 OK`: An object containing the status of the data provider.
+    *   `200 OK`: An object containing the status of the a provider.
     *   `403 Forbidden`: If the user does not have permission to access this endpoint.
 
 ---
