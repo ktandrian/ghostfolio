@@ -35,7 +35,7 @@ jobs:
       - name: 'Checkout PR code'
         uses: 'actions/checkout@v5'
         with:
-          ref: '${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}'
+          ref: '${{ github.event.pull_request.head.ref || github.event.issue.pull_request.head.ref }}'
           fetch-depth: 0
 
       - name: 'Setup Node.js'
