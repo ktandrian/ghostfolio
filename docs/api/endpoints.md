@@ -271,6 +271,7 @@ Retrieves market data for the fear and greed index.
     *   `includeHistoricalData` (number, optional): The number of historical data points to include. Defaults to `0`.
 *   **Response**:
     *   `200 OK`: An object containing the market data for the fear and greed index.
+    *   `403 Forbidden`: If the.
     *   `403 Forbidden`: If the user does not have permission to access this endpoint.
 
 ### GET `/:dataSource/:symbol`
@@ -300,6 +301,28 @@ Updates market data for a specific symbol.
     *   `201 Created`: The updated market data.
     *   `403 Forbidden`: If the user does not have permission to update this market data.
     *   `404 Not Found`: If the symbol could not be found.
+
+---
+
+## News
+
+### GET `/news`
+
+Retrieves news articles.
+
+*   **Response**:
+    *   `200 OK`: A JSON object containing a list of news articles.
+    *   `403 Forbidden`: If the user does not have permission to access this endpoint.
+
+### DELETE `/news/:id`
+
+Deletes a news article.
+
+*   **Parameters**:
+    *   `id` (string): The ID of the news article to delete.
+*   **Response**:
+    *   `200 OK`: If the news article was deleted successfully.
+    *   `403 Forbidden`: If the user does not have permission to delete the news article.
 
 ---
 
