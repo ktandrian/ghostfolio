@@ -314,6 +314,16 @@ Retrieves news articles.
     *   `200 OK`: A JSON object containing a list of news articles.
     *   `403 Forbidden`: If the user does not have permission to access this endpoint.
 
+### DELETE `/news/:id`
+
+Deletes a news article.
+
+*   **Parameters**:
+    *   `id` (string): The ID of the news article to delete.
+*   **Response**:
+    *   `200 OK`: If the news article was deleted successfully.
+    *   `403 Forbidden`: If the user does not have permission to delete the news article.
+
 ---
 
 ## API Keys
