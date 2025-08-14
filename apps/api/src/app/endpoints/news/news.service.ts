@@ -12,4 +12,11 @@ export class NewsService {
       ]
     };
   }
+
+  public deleteNews(id: string) {
+    // TODO: Implement delete logic
+    return {
+      id
+    };
+  }
 }
