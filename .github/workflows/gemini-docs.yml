@@ -61,7 +61,7 @@ jobs:
           use_vertex_ai: 'true'
           gcp_project_id: '${{ secrets.GCP_PROJECT_ID }}'
           gcp_location: 'us-central1'
-          gemini_cli_version: 0.1.18
+          gemini_cli_version: 0.1.21
           settings: |-
             {
               "maxSessionTurns": 40,
